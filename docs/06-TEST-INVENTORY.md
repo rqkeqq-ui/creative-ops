@@ -19,51 +19,7 @@ Vitest использует временные файлы SQLite, поэтому
 
 ## 1. Vitest: unit + integration + API
 
-### `tests/activity.test.ts` — 4
-
-| # | Группа | Тест |
-|---:|---|---|
-| 1 | История действий (аудит) | пишет по записи на каждое действие, включая комментарии и сдачу результата |
-| 2 | История действий (аудит) | не добавляет записей при запрещённых действиях |
-| 3 | История действий (аудит) | история не удаляется и не переписывается при последующих действиях |
-| 4 | История действий (аудит) | сохраняет историю доступной всем ролям через карточку задачи |
-
-### `tests/ai-usage.test.ts` — 6
-
-| # | Группа | Тест |
-|---:|---|---|
-| 1 | AI-расходы: учёт кредитов по задачам | фиксирует сервис, кредиты, автора и фазу initial до правок |
-| 2 | AI-расходы: учёт кредитов по задачам | помечает расходы фазой revision после отправки на правки |
-| 3 | AI-расходы: учёт кредитов по задачам | суммирует кредиты в карточке задачи и отдаёт имена исполнителей |
-| 4 | AI-расходы: учёт кредитов по задачам | не принимает некорректные данные |
-| 5 | AI-расходы: учёт кредитов по задачам | запрещает дописывать расходы в завершённую задачу |
-| 6 | AI-расходы: учёт кредитов по задачам | запрещает добавлять расходы до взятия задачи в работу |
-
-### `tests/analytics.test.ts` — 9
-
-| # | Группа | Тест |
-|---:|---|---|
-| 1 | analytics: totals | counts tasks per kanban column |
-| 2 | analytics: totals | counts unfinished and late deliveries as overdue |
-| 3 | analytics: timing | averages completion time over done tasks only |
-| 4 | analytics: workload | builds a row for every non-manager employee |
-| 5 | analytics: workload | computes creative load, completions, credits and overdue |
-| 6 | analytics: AI spend | aggregates credits by service, employee and phase |
-| 7 | analytics: AI spend | mixes priorities for the breakdown chart |
-| 8 | analytics: range filter | keeps only tasks created within the range (and their AI usage) |
-| 9 | analytics: range filter | produces stable zero-state instead of NaN |
-
-### `tests/analytics.test.ts` — 5
-
-| # | Группа | Тест |
-|---:|---|---|
-| 1 | аналитика руководителя (интеграция с БД) | внутренне согласована: суммы разрезов совпадают с итогами |
-| 2 | аналитика руководителя (интеграция с БД) | строит загрузку по каждому исполнителю с кредитами |
-| 3 | аналитика руководителя (интеграция с БД) | фильтрует по периоду и не ломает итоги |
-| 4 | аналитика руководителя (интеграция с БД) | считает просрочки по дате, а не по статусу |
-| 5 | аналитика руководителя (интеграция с БД) | закрыта для байеров и креативщиков |
-
-### `tests/api.test.ts` — 20
+### `tests/api/api.test.ts` — 20
 
 | # | Группа | Тест |
 |---:|---|---|
@@ -88,7 +44,7 @@ Vitest использует временные файлы SQLite, поэтому
 | 19 | GET /api/meta | отдаёт справочники без хешей паролей |
 | 20 | POST /api/auth/logout | уничтожает сессию |
 
-### `tests/hardening.test.ts` — 19
+### `tests/api/hardening.test.ts` — 19
 
 | # | Группа | Тест |
 |---:|---|---|
@@ -112,7 +68,37 @@ Vitest использует временные файлы SQLite, поэтому
 | 18 | Странные идентификаторы задач → 404, а не 500 | обход путей, длинный id, null-байт |
 | 19 | Гонка за задачу: один победитель | два одновременных взятия → ровно одно 200 и одно 409, исполнитель один |
 
-### `tests/lifecycle.test.ts` — 7
+### `tests/integration/activity.test.ts` — 4
+
+| # | Группа | Тест |
+|---:|---|---|
+| 1 | История действий (аудит) | пишет по записи на каждое действие, включая комментарии и сдачу результата |
+| 2 | История действий (аудит) | не добавляет записей при запрещённых действиях |
+| 3 | История действий (аудит) | история не удаляется и не переписывается при последующих действиях |
+| 4 | История действий (аудит) | сохраняет историю доступной всем ролям через карточку задачи |
+
+### `tests/integration/ai-usage.test.ts` — 6
+
+| # | Группа | Тест |
+|---:|---|---|
+| 1 | AI-расходы: учёт кредитов по задачам | фиксирует сервис, кредиты, автора и фазу initial до правок |
+| 2 | AI-расходы: учёт кредитов по задачам | помечает расходы фазой revision после отправки на правки |
+| 3 | AI-расходы: учёт кредитов по задачам | суммирует кредиты в карточке задачи и отдаёт имена исполнителей |
+| 4 | AI-расходы: учёт кредитов по задачам | не принимает некорректные данные |
+| 5 | AI-расходы: учёт кредитов по задачам | запрещает дописывать расходы в завершённую задачу |
+| 6 | AI-расходы: учёт кредитов по задачам | запрещает добавлять расходы до взятия задачи в работу |
+
+### `tests/integration/analytics.test.ts` — 5
+
+| # | Группа | Тест |
+|---:|---|---|
+| 1 | аналитика руководителя (интеграция с БД) | внутренне согласована: суммы разрезов совпадают с итогами |
+| 2 | аналитика руководителя (интеграция с БД) | строит загрузку по каждому исполнителю с кредитами |
+| 3 | аналитика руководителя (интеграция с БД) | фильтрует по периоду и не ломает итоги |
+| 4 | аналитика руководителя (интеграция с БД) | считает просрочки по дате, а не по статусу |
+| 5 | аналитика руководителя (интеграция с БД) | закрыта для байеров и креативщиков |
+
+### `tests/integration/lifecycle.test.ts` — 7
 
 | # | Группа | Тест |
 |---:|---|---|
@@ -124,7 +110,7 @@ Vitest использует временные файлы SQLite, поэтому
 | 6 | task listing and filters | supports status, assignee, search, overdue and ownership filters |
 | 7 | task listing and filters | returns 404 for a missing task |
 
-### `tests/rbac.test.ts` — 10
+### `tests/integration/rbac.test.ts` — 10
 
 | # | Группа | Тест |
 |---:|---|---|
@@ -139,7 +125,7 @@ Vitest использует временные файлы SQLite, поэтому
 | 9 | RBAC: аналитика | доступна только руководителю |
 | 10 | RBAC: неизвестная задача | возвращает NOT_FOUND вместо утечки данных |
 
-### `tests/seed.test.ts` — 6
+### `tests/integration/seed.test.ts` — 6
 
 | # | Группа | Тест |
 |---:|---|---|
@@ -150,7 +136,21 @@ Vitest использует временные файлы SQLite, поэтому
 | 5 | демо-данные | не дублирует данные при повторном сидировании |
 | 6 | демо-данные | даёт руководителю осмысленную аналитику |
 
-### `tests/time.test.ts` — 13
+### `tests/unit/analytics.test.ts` — 9
+
+| # | Группа | Тест |
+|---:|---|---|
+| 1 | analytics: totals | counts tasks per kanban column |
+| 2 | analytics: totals | counts unfinished and late deliveries as overdue |
+| 3 | analytics: timing | averages completion time over done tasks only |
+| 4 | analytics: workload | builds a row for every non-manager employee |
+| 5 | analytics: workload | computes creative load, completions, credits and overdue |
+| 6 | analytics: AI spend | aggregates credits by service, employee and phase |
+| 7 | analytics: AI spend | mixes priorities for the breakdown chart |
+| 8 | analytics: range filter | keeps only tasks created within the range (and their AI usage) |
+| 9 | analytics: range filter | produces stable zero-state instead of NaN |
+
+### `tests/unit/time.test.ts` — 13
 
 | # | Группа | Тест |
 |---:|---|---|
@@ -168,7 +168,7 @@ Vitest использует временные файлы SQLite, поэтому
 | 12 | formatDuration | formats minutes, hours and days for humans |
 | 13 | formatDuration | renders an em dash for unknown durations |
 
-### `tests/validation.test.ts` — 23
+### `tests/unit/validation.test.ts` — 23
 
 | # | Группа | Тест |
 |---:|---|---|
@@ -196,7 +196,7 @@ Vitest использует временные файлы SQLite, поэтому
 | 22 | aiUsageSchema | rejects unknown AI services |
 | 23 | loginSchema | validates email and password length |
 
-### `tests/workflow.test.ts` — 22
+### `tests/unit/workflow.test.ts` — 22
 
 | # | Группа | Тест |
 |---:|---|---|

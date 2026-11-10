@@ -9,7 +9,7 @@
 import { execSync } from 'node:child_process'
 import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { basename, join } from 'node:path'
+import { join, relative } from 'node:path'
 
 const tmp = mkdtempSync(join(tmpdir(), 'creativeops-inventory-'))
 const vitestJson = join(tmp, 'vitest.json')
@@ -34,7 +34,8 @@ const cell = (value) => escape(value) || '—'
 function vitestRows() {
   const files = vitest.testResults
     .map((file) => ({
-      file: basename(file.name),
+      // Полный путь от корня репозитория, иначе unit/ и integration/ analytics.test.ts неотличимы.
+      file: relative(process.cwd(), file.name).replaceAll('\\', '/'),
       rows: file.assertionResults.map((test) => ({
         group: test.ancestorTitles.join(' › '),
         title: test.title,
@@ -63,7 +64,7 @@ function playwrightRows() {
   }
   for (const suite of playwright.suites ?? []) walk(suite, suite.file, [])
   return [...files.entries()]
-    .map(([file, rows]) => ({ file, rows: rows.sort((a, b) => a.line - b.line) }))
+    .map(([file, rows]) => ({ file: `tests/e2e/${file.replace(/^tests\//, '').replace(/^e2e\//, '')}`, rows: rows.sort((a, b) => a.line - b.line) }))
     .sort((a, b) => a.file.localeCompare(b.file, 'ru'))
 }
 
@@ -97,7 +98,7 @@ lines.push('')
 lines.push('## 1. Vitest: unit + integration + API')
 lines.push('')
 for (const file of vitestFiles) {
-  lines.push(`### \`tests/${file.file}\` — ${file.rows.length}`)
+  lines.push(`### \`${file.file}\` — ${file.rows.length}`)
   lines.push('')
   lines.push('| # | Группа | Тест |')
   lines.push('|---:|---|---|')
@@ -109,7 +110,7 @@ for (const file of vitestFiles) {
 lines.push('## 2. Playwright: E2E-сценарии в браузере')
 lines.push('')
 for (const file of playwrightFiles) {
-  lines.push(`### \`tests/e2e/${file.file}\` — ${file.rows.length}`)
+  lines.push(`### \`${file.file}\` — ${file.rows.length}`)
   lines.push('')
   lines.push('| # | Группа | Сценарий |')
   lines.push('|---:|---|---|')

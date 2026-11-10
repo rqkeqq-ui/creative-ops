@@ -12,3 +12,4 @@ test-results
 .env
 srv.log
 srv.err.log
+*.log
