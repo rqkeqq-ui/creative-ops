@@ -10,3 +10,5 @@ test-results
 *.tsbuildinfo
 .env*.local
 .env
+srv.log
+srv.err.log
