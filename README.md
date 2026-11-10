@@ -114,8 +114,8 @@ Next.js Route Handlers ──► Services (use-cases, RBAC, транзакции
 Тесты писались **до** кода. Сначала был зафиксирован красный прогон (модулей ещё нет), затем реализация доводилась до зелёного. Тесты не ослаблялись: правки по ходу касались только UI-подписей и сообщений об ошибках, а не ожиданий проверок.
 
 ```bash
-npm test              # 125 тестов: unit + integration + API
-npm run test:e2e      # 28 Playwright-сценариев (нужен npm run build)
+npm test              # 144 тестов: unit + integration + API
+npm run test:e2e      # 38 Playwright-сценариев (нужен npm run build)
 npm run test:inventory # пересобрать полный список тестов
 npm run verify        # typecheck + tests + build
 ```
@@ -127,8 +127,9 @@ npm run verify        # typecheck + tests + build
 | API | коды ответов, cookie-сессия, валидация (включая невалидные фильтры), запрет мутаций без авторизации |
 | E2E | вход, создание ТЗ, взятие, сдача, правки, повторная сдача, приёмка, AI-кредиты, аналитика |
 | E2E edge-cases | ошибки ввода, XSS, спецсимволы, обход RBAC через API, повторные действия, чужие задачи |
+| E2E interactions | двойные клики (дубли задач/кредитов), Enter, F5, история браузера, подделанная cookie, 405 |
 
-Текущий статус: **125/125** unit/integration/API и **28/28** E2E. Полный список всех 153 тестов с описанием найденных багов — [`docs/06-TEST-INVENTORY.md`](docs/06-TEST-INVENTORY.md).
+Текущий статус: **144/144** unit/integration/API и **38/38** E2E. Полный список всех 182 тестов с описанием найденных багов — [`docs/06-TEST-INVENTORY.md`](docs/06-TEST-INVENTORY.md).
 
 ---
 

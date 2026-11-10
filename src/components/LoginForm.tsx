@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Icon } from './Icon'
 
@@ -22,8 +22,12 @@ export function LoginForm() {
   const [password, setPassword] = useState('demo1234')
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState<string | null>(null)
+  // Синхронный замок против двойного входа/двойного клика по демо-аккаунту.
+  const inFlight = useRef(false)
 
   async function signIn(nextEmail: string, nextPassword: string, key: string) {
+    if (inFlight.current) return
+    inFlight.current = true
     setPending(key)
     setError(null)
     try {
@@ -42,6 +46,7 @@ export function LoginForm() {
     } catch {
       setError('Сервис недоступен, попробуйте ещё раз')
     } finally {
+      inFlight.current = false
       setPending(null)
     }
   }

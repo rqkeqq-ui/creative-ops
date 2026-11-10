@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { CREATIVE_TYPES, PRIORITY_LABELS, GEO_SUGGESTIONS } from '@/lib/domain/catalog'
@@ -30,8 +30,13 @@ export function NewTaskForm() {
   const [errors, setErrors] = useState<FieldErrors>({})
   const [formError, setFormError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
+  // Синхронный замок: setPending не успевает примениться до второго submit
+  // при двойном клике/Enter, поэтому защищаемся ref-ом, а не только state.
+  const inFlight = useRef(false)
 
   async function submit() {
+    if (inFlight.current) return
+    inFlight.current = true
     setPending(true)
     setFormError(null)
     setErrors({})
@@ -74,6 +79,7 @@ export function NewTaskForm() {
     } catch {
       setFormError('Сервис недоступен, попробуйте ещё раз')
     } finally {
+      inFlight.current = false
       setPending(false)
     }
   }

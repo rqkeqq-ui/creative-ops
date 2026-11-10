@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { TaskAction, TaskStatus } from '@/lib/domain/types'
 import { Icon } from './Icon'
@@ -14,6 +14,8 @@ interface Props {
 export function TaskActions({ taskId, actions, status }: Props) {
   const router = useRouter()
   const [pending, setPending] = useState<string | null>(null)
+  // Синхронный замок: двойной клик не должен отправлять действие дважды.
+  const inFlight = useRef(false)
   const [error, setError] = useState<string | null>(null)
   const [deliverableUrl, setDeliverableUrl] = useState('')
   const [deliverableNote, setDeliverableNote] = useState('')
@@ -25,6 +27,8 @@ export function TaskActions({ taskId, actions, status }: Props) {
   const canRevise = actions.includes('request_revision')
 
   async function run(action: TaskAction, payload: Record<string, unknown> = {}) {
+    if (inFlight.current) return
+    inFlight.current = true
     setPending(action)
     setError(null)
     try {
@@ -49,6 +53,7 @@ export function TaskActions({ taskId, actions, status }: Props) {
     } catch {
       setError('Сервис недоступен, попробуйте ещё раз')
     } finally {
+      inFlight.current = false
       setPending(null)
     }
   }

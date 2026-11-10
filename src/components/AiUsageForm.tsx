@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { AI_SERVICES } from '@/lib/domain/types'
 import { Icon } from './Icon'
@@ -12,8 +12,12 @@ export function AiUsageForm({ taskId }: { taskId: string }) {
   const [note, setNote] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
+  // Синхронный замок против двойного submit: state применяется лишь после ре-рендера.
+  const inFlight = useRef(false)
 
   async function submit() {
+    if (inFlight.current) return
+    inFlight.current = true
     setPending(true)
     setError(null)
     try {
@@ -35,6 +39,7 @@ export function AiUsageForm({ taskId }: { taskId: string }) {
     } catch {
       setError('Сервис недоступен, попробуйте ещё раз')
     } finally {
+      inFlight.current = false
       setPending(false)
     }
   }
