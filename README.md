@@ -4,6 +4,12 @@
 
 **Стек:** Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · SQLite (`node:sqlite`) · Vitest · Playwright.
 
+## Работающая демоверсия
+
+**https://pvc-tradition-ready-aluminium.trycloudflare.com**
+
+Ссылка поднята через временный Cloudflare quick tunnel к локально запущенному production-серверу. Если туннель остановлен, сервис запускается за две команды по инструкции ниже. Демо-доступы — в таблице ниже, пароль `demo1234`.
+
 ![Kanban-доска](docs/screenshots/02-kanban-manager.png)
 
 ---
