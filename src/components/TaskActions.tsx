@@ -33,9 +33,11 @@ export function TaskActions({ taskId, actions, status }: Props) {
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ action, ...payload }),
       })
-      const data = (await response.json()) as { error?: { message: string } }
+      const data = (await response.json()) as {
+        error?: { message: string; details?: { field: string; message: string }[] }
+      }
       if (!response.ok) {
-        setError(data.error?.message ?? 'Не удалось выполнить действие')
+        setError(data.error?.details?.[0]?.message ?? data.error?.message ?? 'Не удалось выполнить действие')
         return
       }
       if (action === 'submit') {

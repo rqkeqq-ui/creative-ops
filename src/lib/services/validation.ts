@@ -84,8 +84,11 @@ export const aiUsageSchema = z.object({
 export type AiUsageInput = z.infer<typeof aiUsageSchema>
 
 export const loginSchema = z.object({
-  email: z.string().trim().email('Некорректный email'),
-  password: z.string().min(6, 'Минимум 6 символов').max(100, 'Слишком длинный пароль'),
+  email: z.string({ required_error: 'Укажите email' }).trim().min(1, 'Укажите email').email('Некорректный email'),
+  password: z
+    .string({ required_error: 'Укажите пароль' })
+    .min(6, 'Минимум 6 символов')
+    .max(100, 'Слишком длинный пароль'),
 })
 
 export const actionSchema = z.object({

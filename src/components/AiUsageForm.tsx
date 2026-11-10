@@ -22,9 +22,11 @@ export function AiUsageForm({ taskId }: { taskId: string }) {
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ service, credits: Number(credits), note }),
       })
-      const data = (await response.json()) as { error?: { message: string } }
+      const data = (await response.json()) as {
+        error?: { message: string; details?: { field: string; message: string }[] }
+      }
       if (!response.ok) {
-        setError(data.error?.message ?? 'Не удалось сохранить расход')
+        setError(data.error?.details?.[0]?.message ?? data.error?.message ?? 'Не удалось сохранить расход')
         return
       }
       setCredits('')

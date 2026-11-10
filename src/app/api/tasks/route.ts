@@ -1,6 +1,6 @@
 import { appCtx, boolParam, currentUser, handle, json, readJson } from '@/lib/api/http'
 import { createTask, getTaskDetail, listTasks, type TaskFilters } from '@/lib/services/tasks'
-import { taskFiltersSchema } from '@/lib/services/validation'
+import { parseInput, taskFiltersSchema } from '@/lib/services/validation'
 import type { Priority, TaskStatus } from '@/lib/domain/types'
 
 export const dynamic = 'force-dynamic'
@@ -9,7 +9,7 @@ export async function GET(request: Request) {
   return handle(() => {
     const { user } = currentUser(request)
     const params = new URL(request.url).searchParams
-    const filters = taskFiltersSchema.parse({
+    const filters = parseInput(taskFiltersSchema, {
       status: params.get('status') ?? undefined,
       priority: params.get('priority') ?? undefined,
       q: params.get('q') ?? undefined,

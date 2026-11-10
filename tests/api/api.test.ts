@@ -132,6 +132,39 @@ describe('сессия', () => {
   })
 })
 
+describe('GET /api/tasks: фильтры', () => {
+  it('отклоняет неизвестный статус как 422, а не 500', async () => {
+    const res = await call<{ error: { code: string; details?: Array<{ field: string }> } }>(
+      tasksGET, '/api/tasks?status=bogus', { headers: { cookie: buyerCookie! } },
+    )
+    expect(res.status).toBe(422)
+    expect(res.body.error.code).toBe('VALIDATION_ERROR')
+    expect(res.body.error.details?.map((d) => d.field)).toContain('status')
+  })
+
+  it('отклоняет неизвестный приоритет и слишком длинный поиск', async () => {
+    const priority = await call<{ error: { code: string } }>(
+      tasksGET, '/api/tasks?priority=urgentt', { headers: { cookie: buyerCookie! } },
+    )
+    expect(priority.status).toBe(422)
+    expect(priority.body.error.code).toBe('VALIDATION_ERROR')
+
+    const longQuery = await call<{ error: { code: string } }>(
+      tasksGET, `/api/tasks?q=${'x'.repeat(140)}`, { headers: { cookie: buyerCookie! } },
+    )
+    expect(longQuery.status).toBe(422)
+    expect(longQuery.body.error.code).toBe('VALIDATION_ERROR')
+  })
+
+  it('принимает корректные фильтры и отдаёт только подходящие задачи', async () => {
+    const res = await call<{ tasks: Array<{ status: string; priority: string }> }>(
+      tasksGET, '/api/tasks?status=new&priority=urgent', { headers: { cookie: buyerCookie! } },
+    )
+    expect(res.status).toBe(200)
+    expect(res.body.tasks.every((task) => task.status === 'new' && task.priority === 'urgent')).toBe(true)
+  })
+})
+
 describe('POST /api/tasks', () => {
   const valid = {
     offer: 'API Offer',

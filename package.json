@@ -11,6 +11,8 @@
     "build": "next build",
     "start": "next start -p 3000",
     "screenshots": "node scripts/screenshots.mjs",
+    "audit:api": "node scripts/api-audit.mjs",
+    "test:inventory": "node scripts/test-inventory.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",

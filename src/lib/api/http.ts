@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { ZodError } from 'zod'
 import { getDb } from '@/lib/db/client'
 import { createCtx, type Ctx } from '@/lib/services/context'
 import { SESSION_COOKIE, getUserByToken } from '@/lib/services/auth'
@@ -48,6 +49,19 @@ export async function handle(fn: () => Promise<Response> | Response): Promise<Re
       return json(
         { error: { code: error.code, message: error.message, ...(error.details ? { details: error.details } : {}) } },
         { status: error.status },
+      )
+    }
+    // Страховка: любой несобранный zod-парс должен стать 422, а не 500.
+    if (error instanceof ZodError) {
+      return json(
+        {
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Проверьте заполнение полей',
+            details: error.issues.map((issue) => ({ field: String(issue.path[0] ?? 'form'), message: issue.message })),
+          },
+        },
+        { status: 422 },
       )
     }
     console.error('[api] unexpected error', error)

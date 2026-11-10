@@ -54,6 +54,7 @@ AI использовался не как генератор «кода на г�
 | Демо-данные | `tests/integration/seed.test.ts` |
 | HTTP-контракт | `tests/api/api.test.ts` |
 | UI и RBAC в браузере | `tests/e2e/board.spec.ts`, `analytics.spec.ts` |
+| Нестандартные действия: ошибки ввода, XSS, обход RBAC через API, повторные действия, чужие задачи | `tests/e2e/edge-cases.spec.ts` |
 
 ### Шаг 3. Код под тесты
 
@@ -66,7 +67,7 @@ AI использовался не как генератор «кода на г�
 - Ленивый автосев демо-данных при первом обращении к БД.
 - 16 задач во всех статусах, просрочки, правки, история, AI-расходы.
 - Скриншоты ключевых экранов (`docs/screenshots/`).
-- Финальный прогон: `tsc --noEmit` → `vitest` (122) → `next build` → Playwright (10).
+- Финальный прогон: `tsc --noEmit` → `vitest` (125) → `next build` → Playwright (28).
 
 ---
 
@@ -112,7 +113,7 @@ AI использовался не как генератор «кода на г�
 
 ```bash
 npm ci
-npm test          # 122 теста
+npm test          # 125 тестов
 npm run build
 npm run test:e2e  # 10 сценариев
 ```
