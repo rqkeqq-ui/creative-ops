@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: creativeops
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: APP_DB_PATH
+        value: /tmp/creativeops.db
+      - key: SEED_DEMO
+        value: "true"
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"
