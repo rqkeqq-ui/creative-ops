@@ -9,6 +9,7 @@ import { TASK_STATUSES } from '@/lib/domain/types'
 import { formatDate, formatDuration } from '@/lib/domain/time'
 import { formatCredits, formatNumber, plural } from '@/lib/format'
 import { Avatar } from '@/components/ui'
+import { PendingLink } from '@/components/PendingLink'
 
 export const dynamic = 'force-dynamic'
 
@@ -251,11 +252,12 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
             ) : (
               <div className="grid gap-2">
                 {report.overdueTasks.map((item) => (
-                  <a
+                  <PendingLink
                     key={item.id}
                     href={`/tasks/${item.id}`}
+                    prefetch={false}
                     data-testid="overdue-item"
-                    className="flex items-center justify-between gap-3 rounded-lg border border-[rgba(248,113,113,.18)] bg-[rgba(248,113,113,.05)] px-3 py-2.5 transition hover:border-[rgba(248,113,113,.4)] hover:bg-[rgba(248,113,113,.09)]"
+                    className="relative flex items-center justify-between gap-3 rounded-lg border border-[rgba(248,113,113,.18)] bg-[rgba(248,113,113,.05)] px-3 py-2.5 transition hover:border-[rgba(248,113,113,.4)] hover:bg-[rgba(248,113,113,.09)]"
                   >
                     <div className="min-w-0">
                       <p className="truncate text-[12px] font-medium">{item.offer}</p>
@@ -266,7 +268,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
                     <span className="pill pill-urgent shrink-0">
                       +{item.daysLate < 1 ? `${Math.round(item.daysLate * 24)}ч` : `${Math.round(item.daysLate)}д`}
                     </span>
-                  </a>
+                  </PendingLink>
                 ))}
               </div>
             )}

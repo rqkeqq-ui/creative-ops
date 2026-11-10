@@ -41,8 +41,8 @@ export function LoginForm() {
         setError(payload.error?.message ?? 'Не удалось войти')
         return
       }
+      // replace сам запрашивает /board с новой cookie; refresh давал второй такой же RSC-запрос.
       router.replace('/board')
-      router.refresh()
     } catch {
       setError('Сервис недоступен, попробуйте ещё раз')
     } finally {

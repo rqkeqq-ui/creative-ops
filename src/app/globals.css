@@ -66,10 +66,12 @@ body::before {
     radial-gradient(700px 420px at 50% 118%, rgba(124, 58, 237, 0.06), transparent 62%);
 }
 
+/* Сетка только в верхней части документа: не держим полноэкранный fixed-слой. */
 body::after {
   content: '';
-  position: fixed;
-  inset: 0;
+  position: absolute;
+  inset: 0 0 auto;
+  height: 560px;
   z-index: 0;
   pointer-events: none;
   opacity: 0.28;
@@ -77,7 +79,7 @@ body::after {
     linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
   background-size: 56px 56px;
-  mask-image: radial-gradient(ellipse 80% 55% at 50% 0%, #000 20%, transparent 78%);
+  mask-image: linear-gradient(to bottom, #000 20%, transparent 100%);
 }
 
 ::selection {
@@ -427,9 +429,10 @@ p {
     position: sticky;
     top: 0;
     z-index: 40;
-    background: rgba(9, 9, 11, 0.82);
+    /* Без backdrop-filter: фиксированный blur пересчитывается на каждом кадре скролла. */
+    background: rgba(9, 9, 11, 0.97);
     border-bottom: 1px solid var(--line);
-    backdrop-filter: blur(18px) saturate(140%);
+    box-shadow: 0 14px 34px -28px rgba(0, 0, 0, 0.9);
   }
 
   .topbar-inner {
@@ -604,9 +607,12 @@ p {
     overflow-y: auto;
     padding-right: 2px;
     scrollbar-gutter: stable;
+    /* Изолируем перерисовку скроллящейся колонки от остальной доски. */
+    contain: layout paint;
   }
 
   .task-card {
+    position: relative;
     display: block;
     padding: 16px;
     border-radius: 12px;
@@ -704,6 +710,53 @@ p {
     margin: 0 auto;
     padding: 26px 24px 48px;
   }
+
+  /* ---------- Skeleton при навигации ---------- */
+
+  .page-skeleton {
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #141417;
+  }
+
+  .skeleton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.055), transparent);
+    animation: skeleton-sweep 1.4s ease-in-out infinite;
+  }
+
+  /* ---------- Индикатор перехода по ссылке ---------- */
+
+  .link-pending {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    border-radius: inherit;
+    background: rgba(9, 9, 11, 0.55);
+    pointer-events: none;
+  }
+
+  .link-pending-spinner {
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    border: 2px solid rgba(255, 255, 255, 0.16);
+    border-top-color: var(--accent-hover);
+    animation: spin 700ms linear infinite;
+  }
 }
 
 @keyframes fade-in {
@@ -714,6 +767,29 @@ p {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes skeleton-sweep {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 

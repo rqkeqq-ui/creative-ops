@@ -10,6 +10,7 @@ import { formatDeadline } from '@/lib/domain/time'
 import { formatCredits, tasksWord } from '@/lib/format'
 import { Avatar, CreditsChip, DeadlineChip, EmptyState, GeoChip, PriorityChip, TypeChip } from '@/components/ui'
 import { Icon } from '@/components/Icon'
+import { PendingLink } from '@/components/PendingLink'
 
 interface Creative {
   id: string
@@ -189,7 +190,14 @@ export function KanbanBoard({
                   </div>
                 ) : (
                   items.map((task) => (
-                    <Link key={task.id} href={`/tasks/${task.id}`} className="task-card" data-testid="task-card" data-code={task.code}>
+                    <PendingLink
+                      key={task.id}
+                      href={`/tasks/${task.id}`}
+                      prefetch={false}
+                      className="task-card"
+                      data-testid="task-card"
+                      data-code={task.code}
+                    >
                       <div className="flex items-center justify-between gap-2">
                         <span className="font-mono text-[10px] font-medium tracking-[0.02em] text-[var(--muted-2)]">{task.code}</span>
                         <PriorityChip priority={task.priority} />
@@ -220,7 +228,7 @@ export function KanbanBoard({
                           <span className="pill pill-high">правки · {task.revisionCount}</span>
                         ) : null}
                       </div>
-                    </Link>
+                    </PendingLink>
                   ))
                 )}
               </div>
