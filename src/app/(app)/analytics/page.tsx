@@ -51,6 +51,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
           value={String(report.totals.all)}
           hint={`${report.totals.active} активных · ${report.totals.completed} завершено`}
           icon="layers"
+          accent="var(--accent)"
           testId="kpi-total"
         />
         <KpiCard
@@ -66,6 +67,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
           value={formatDuration(report.timing.avgCompletionMs)}
           hint={`медиана ${formatDuration(report.timing.medianCompletionMs)}`}
           icon="clock"
+          accent="var(--blue)"
           testId="kpi-avg-time"
         />
         <KpiCard
@@ -73,12 +75,13 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
           value={formatNumber(report.ai.totalCredits)}
           hint={`${report.ai.entries} ${plural(report.ai.entries, 'списание', 'списания', 'списаний')}`}
           icon="coins"
-          accent="var(--lime)"
+          accent="var(--green)"
           testId="kpi-credits"
         />
       </div>
 
-      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[1.15fr_1fr]">
+      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[1.45fr_1fr]">
+        <div className="grid min-w-0 gap-4">
         <Panel title="Распределение по статусам" hint={`Воронка производства · ${report.totals.all} задач`} icon="board">
           <div className="flex h-2.5 w-full overflow-hidden rounded-full bg-[rgba(255,255,255,0.05)]">
             {TASK_STATUSES.map((status) => {
@@ -122,55 +125,6 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
           </div>
         </Panel>
 
-        <Panel title="AI-расходы по сервисам" hint={`${formatNumber(report.ai.totalCredits)} кредитов всего`} icon="coins" testId="ai-by-service">
-          {report.ai.byService.length === 0 ? (
-            <p className="text-[12px] text-[var(--muted-2)]">Расходов за период нет.</p>
-          ) : (
-            <div className="grid gap-3">
-              {report.ai.byService.map((row) => (
-                <div key={row.service} data-testid="ai-service-row">
-                  <div className="flex items-baseline justify-between gap-3">
-                    <span className="flex items-center gap-2 text-[12px] font-medium">
-                      <span
-                        className="h-2 w-2 rounded-full"
-                        style={{ background: AI_SERVICE_COLORS[row.service] ?? 'var(--violet)' }}
-                      />
-                      {row.service}
-                    </span>
-                    <span className="text-[12px] font-semibold tabular-nums">{formatCredits(row.credits)} кр.</span>
-                  </div>
-                  <div className="mt-1.5 flex items-center gap-2">
-                    <div className="bar-track flex-1">
-                      <div
-                        className="bar-fill"
-                        style={{
-                          width: `${Math.max(3, (row.credits / maxService) * 100)}%`,
-                          background: AI_SERVICE_COLORS[row.service] ?? 'var(--violet)',
-                        }}
-                      />
-                    </div>
-                    <span className="w-[92px] text-right text-[10px] text-[var(--muted-2)]">
-                      {row.entries} · {row.tasks} задач
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-          <div className="mt-4 grid grid-cols-2 gap-2 border-t border-[var(--line)] pt-3">
-            <div className="rounded-lg bg-[rgba(255,255,255,0.03)] px-3 py-2">
-              <p className="text-[10px] uppercase tracking-[0.07em] text-[var(--muted-2)]">Основные</p>
-              <p className="mt-0.5 text-[14px] font-semibold">{formatCredits(report.ai.byPhase.initial)} кр.</p>
-            </div>
-            <div className="rounded-lg bg-[rgba(242,166,90,0.07)] px-3 py-2">
-              <p className="text-[10px] uppercase tracking-[0.07em] text-[var(--muted-2)]">На правках</p>
-              <p className="mt-0.5 text-[14px] font-semibold text-[#f6c28b]">{formatCredits(report.ai.byPhase.revision)} кр.</p>
-            </div>
-          </div>
-        </Panel>
-      </div>
-
-      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[1.45fr_1fr]">
         <Panel title="Загрузка сотрудников" hint="Активные задачи, завершения, просрочки и расходы AI" icon="user">
           <div className="overflow-x-auto">
             <table className="data-table" data-testid="team-table">
@@ -194,21 +148,26 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
                         <Avatar name={row.name} color={row.color} size={26} />
                         <div className="min-w-0">
                           <p className="truncate text-[12px] font-medium">{row.name}</p>
-                          <p className="text-[10px] text-[var(--muted-2)]">
-                            {row.role === 'creative' ? 'креативщик' : 'медиабайер'} · {row.active + row.completed} задач
-                          </p>
+                          <div className="mt-1 flex items-center gap-1.5">
+                            <span className="pill pill-low">{row.role === 'creative' ? 'креатив' : 'байер'}</span>
+                            <span className="text-[10px] text-[var(--muted-2)]">{row.active + row.completed} задач</span>
+                          </div>
                         </div>
                       </div>
                     </td>
                     <td className="num text-right">{row.active}</td>
                     <td className="num text-right">{row.inProgress}</td>
                     <td className="num text-right">{row.inReview}</td>
-                    <td className="num text-right text-[#7ee2b8]">{row.completed}</td>
-                    <td className="num text-right" style={{ color: row.overdue > 0 ? '#f26d6d' : 'var(--muted-2)' }}>
-                      {row.overdue}
+                    <td className="text-right">
+                      <span className="pill pill-ai">{row.completed}</span>
+                    </td>
+                    <td className="text-right">
+                      {row.overdue > 0 ? <span className="pill pill-urgent">{row.overdue}</span> : <span className="text-[var(--muted-2)]">0</span>}
                     </td>
                     <td className="num text-right">{formatDuration(row.avgCompletionMs)}</td>
-                    <td className="num text-right text-[#c6f24e]">{formatCredits(row.credits)}</td>
+                    <td className="text-right">
+                      <span className="pill pill-ai">{formatCredits(row.credits)}</span>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -236,8 +195,56 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
               ))}
           </div>
         </Panel>
+        </div>
 
-        <div className="grid gap-4">
+        <div className="grid min-w-0 gap-4">
+          <Panel title="AI-расходы по сервисам" hint={`${formatNumber(report.ai.totalCredits)} кредитов всего`} icon="coins" testId="ai-by-service">
+          {report.ai.byService.length === 0 ? (
+            <p className="text-[12px] text-[var(--muted-2)]">Расходов за период нет.</p>
+          ) : (
+            <div className="grid gap-3">
+              {report.ai.byService.map((row) => (
+                <div key={row.service} data-testid="ai-service-row" className="rounded-lg border border-transparent px-1 py-1 transition hover:border-[var(--line)] hover:bg-[var(--surface-2)]">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="flex min-w-0 items-center gap-2 text-[12px] font-medium">
+                      <span
+                        className="h-2 w-2 shrink-0 rounded-full"
+                        style={{ background: AI_SERVICE_COLORS[row.service] ?? 'var(--violet)' }}
+                      />
+                      <span className="truncate">{row.service}</span>
+                    </span>
+                    <span className="pill pill-ai shrink-0">{formatCredits(row.credits)} кр.</span>
+                  </div>
+                  <div className="mt-2 flex items-center gap-2">
+                    <div className="bar-track flex-1">
+                      <div
+                        className="bar-fill"
+                        style={{
+                          width: `${Math.max(3, (row.credits / maxService) * 100)}%`,
+                          background: AI_SERVICE_COLORS[row.service] ?? 'var(--violet)',
+                        }}
+                      />
+                    </div>
+                    <span className="w-[104px] text-right text-[10px] text-[var(--muted-2)]">
+                      {row.entries} · {row.tasks} задач
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="mt-4 grid grid-cols-2 gap-2 border-t border-[var(--line)] pt-3">
+            <div className="rounded-lg bg-[rgba(255,255,255,0.03)] px-3 py-2">
+              <p className="text-[10px] uppercase tracking-[0.07em] text-[var(--muted-2)]">Основные</p>
+              <p className="mt-0.5 text-[14px] font-semibold">{formatCredits(report.ai.byPhase.initial)} кр.</p>
+            </div>
+            <div className="rounded-lg bg-[rgba(242,166,90,0.07)] px-3 py-2">
+              <p className="text-[10px] uppercase tracking-[0.07em] text-[var(--muted-2)]">На правках</p>
+              <p className="mt-0.5 text-[14px] font-semibold text-[#fdba74]">{formatCredits(report.ai.byPhase.revision)} кр.</p>
+            </div>
+          </div>
+          </Panel>
+
           <Panel title="Просроченные задачи" hint="Дедлайн прошёл, работа не завершена" icon="alert" testId="overdue-list">
             {report.overdueTasks.length === 0 ? (
               <p className="text-[12px] text-[var(--muted-2)]">Просрочек нет — отдел в графике.</p>
@@ -248,7 +255,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
                     key={item.id}
                     href={`/tasks/${item.id}`}
                     data-testid="overdue-item"
-                    className="flex items-center justify-between gap-3 rounded-lg border border-[#f26d6d26] bg-[#f26d6d0a] px-3 py-2.5 transition hover:border-[#f26d6d55]"
+                    className="flex items-center justify-between gap-3 rounded-lg border border-[rgba(248,113,113,.18)] bg-[rgba(248,113,113,.05)] px-3 py-2.5 transition hover:border-[rgba(248,113,113,.4)] hover:bg-[rgba(248,113,113,.09)]"
                   >
                     <div className="min-w-0">
                       <p className="truncate text-[12px] font-medium">{item.offer}</p>
@@ -256,7 +263,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
                         {item.code} · {item.assigneeName ?? 'без исполнителя'} · до {formatDate(item.deadline)}
                       </p>
                     </div>
-                    <span className="chip shrink-0" style={{ color: '#f26d6d', background: '#f26d6d14', borderColor: '#f26d6d33' }}>
+                    <span className="pill pill-urgent shrink-0">
                       +{item.daysLate < 1 ? `${Math.round(item.daysLate * 24)}ч` : `${Math.round(item.daysLate)}д`}
                     </span>
                   </a>
@@ -286,7 +293,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
                 {report.ai.byUser.slice(0, 3).map((row) => (
                   <div key={row.userId} className="flex items-center justify-between gap-2 text-[11.5px]">
                     <span className="truncate text-[var(--muted)]">{row.name}</span>
-                    <span className="font-semibold text-[#c6f24e]">{formatCredits(row.credits)} кр.</span>
+                    <span className="pill pill-ai">{formatCredits(row.credits)} кр.</span>
                   </div>
                 ))}
                 {report.ai.byUser.length === 0 ? <p className="text-[11.5px] text-[var(--muted-2)]">Нет данных</p> : null}

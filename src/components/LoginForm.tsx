@@ -55,12 +55,12 @@ export function LoginForm() {
     <div className="w-full max-w-[420px]">
       <div className="panel p-6">
         <div className="flex items-center gap-2.5">
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#c6f24e] text-[#0a0d05]">
-            <Icon name="spark" size={18} />
+          <span className="brand-mark">
+            <Icon name="spark" size={17} />
           </span>
           <div>
             <h1 className="text-[17px] font-semibold tracking-[-0.02em]">Вход в CreativeOps</h1>
-            <p className="text-[11.5px] text-[var(--muted-2)]">Демо-стенд с тестовыми пользователями</p>
+            <p className="text-[11px] text-[var(--muted-2)]">Демо-стенд с тестовыми пользователями</p>
           </div>
         </div>
 
@@ -73,7 +73,7 @@ export function LoginForm() {
               data-testid={`demo-${account.role}`}
               disabled={pending !== null}
               onClick={() => signIn(account.email, 'demo1234', account.role)}
-              className="flex items-center gap-3 rounded-xl border border-[var(--line)] bg-[rgba(255,255,255,0.02)] px-3 py-2.5 text-left transition hover:border-[var(--line-strong)] hover:bg-[rgba(255,255,255,0.05)] disabled:opacity-60"
+              className="flex items-center gap-3 rounded-xl border border-[var(--line)] bg-[var(--surface-2)] px-3 py-2.5 text-left transition duration-150 hover:border-[rgba(124,58,237,.55)] hover:bg-[var(--surface-3)] disabled:opacity-60"
             >
               <span
                 className="grid h-8 w-8 place-items-center rounded-full text-[11px] font-bold"
@@ -136,7 +136,7 @@ export function LoginForm() {
             />
           </div>
           {error ? (
-            <p data-testid="login-error" className="rounded-lg border border-[#f26d6d40] bg-[#f26d6d14] px-3 py-2 text-[12px] text-[#f6a1a1]">
+            <p data-testid="login-error" className="rounded-lg border border-[rgba(248,113,113,.3)] bg-[rgba(248,113,113,.08)] px-3 py-2 text-[12px] text-[#fca5a5]">
               {error}
             </p>
           ) : null}

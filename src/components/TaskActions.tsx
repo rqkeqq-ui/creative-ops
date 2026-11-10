@@ -115,8 +115,8 @@ export function TaskActions({ taskId, actions, status }: Props) {
       ) : null}
 
       {canRevise ? (
-        <div className="grid gap-2.5 rounded-xl border border-[#f2a65a33] bg-[#f2a65a0a] p-3">
-          <p className="text-[11.5px] font-medium text-[#f6c28b]">Вернуть на правки</p>
+        <div className="grid gap-2.5 rounded-xl border border-[rgba(251,146,60,.28)] bg-[rgba(251,146,60,.06)] p-3">
+          <p className="text-[11.5px] font-medium text-[#fdba74]">Вернуть на правки</p>
           <textarea
             data-testid="revision-comment"
             className="textarea !min-h-[72px]"
@@ -138,7 +138,7 @@ export function TaskActions({ taskId, actions, status }: Props) {
       ) : null}
 
       {error ? (
-        <p data-testid="action-error" className="rounded-lg border border-[#f26d6d40] bg-[#f26d6d14] px-3 py-2 text-[11.5px] text-[#f6a1a1]">
+        <p data-testid="action-error" className="rounded-lg border border-[rgba(248,113,113,.3)] bg-[rgba(248,113,113,.08)] px-3 py-2 text-[11.5px] text-[#fca5a5]">
           {error}
         </p>
       ) : null}

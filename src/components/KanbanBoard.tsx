@@ -8,7 +8,7 @@ import { PRIORITY_LABELS, STATUS_ACCENT, STATUS_HINTS, STATUS_LABELS } from '@/l
 import { TASK_STATUSES } from '@/lib/domain/types'
 import { formatDeadline } from '@/lib/domain/time'
 import { formatCredits, tasksWord } from '@/lib/format'
-import { Avatar, CreditsChip, DeadlineChip, EmptyState, PriorityChip, TypeChip } from '@/components/ui'
+import { Avatar, CreditsChip, DeadlineChip, EmptyState, GeoChip, PriorityChip, TypeChip } from '@/components/ui'
 import { Icon } from '@/components/Icon'
 
 interface Creative {
@@ -72,15 +72,22 @@ export function KanbanBoard({
           { label: 'Просрочено', value: overdue, hint: 'дедлайн уже прошёл', icon: 'alert' as const, color: overdue > 0 ? 'var(--red)' : 'var(--green)' },
           { label: 'Свободны', value: unassigned, hint: 'можно взять в работу', icon: 'inbox' as const, color: 'var(--muted)' },
         ].map((item) => (
-          <div key={item.label} className="panel-soft flex items-center gap-3 px-4 py-3">
-            <span className="grid h-9 w-9 place-items-center rounded-lg" style={{ background: `color-mix(in srgb, ${item.color} 14%, transparent)`, color: item.color }}>
-              <Icon name={item.icon} size={17} />
+          <div key={item.label} className="stat-card">
+            <span
+              className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border"
+              style={{
+                background: `color-mix(in srgb, ${item.color} 12%, transparent)`,
+                borderColor: `color-mix(in srgb, ${item.color} 24%, transparent)`,
+                color: item.color,
+              }}
+            >
+              <Icon name={item.icon} size={16} />
             </span>
-            <div>
-              <p className="metric-value !text-[20px]" style={{ color: item.color }}>
+            <div className="min-w-0">
+              <p className="text-[20px] font-semibold leading-none tracking-[-0.03em]" style={{ color: item.color }}>
                 {item.value}
               </p>
-              <p className="text-[10.5px] text-[var(--muted-2)]">{item.label}</p>
+              <p className="mt-1.5 truncate text-[10.5px] text-[var(--muted-2)]">{item.label}</p>
             </div>
           </div>
         ))}
@@ -149,66 +156,68 @@ export function KanbanBoard({
         </span>
       </div>
 
-      <div className="kanban-grid mt-4 grid grid-cols-5 gap-3.5" data-testid="kanban">
+      <div className="kanban-grid mt-4" data-testid="kanban">
         {TASK_STATUSES.map((status) => {
           const items = byStatus[status]
           const accent = STATUS_ACCENT[status]
           return (
             <section key={status} className="column" data-testid={`column-${status}`}>
-              <header className="flex items-center justify-between px-1">
-                <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full" style={{ background: accent }} />
-                  <span className="text-[12px] font-semibold">{STATUS_LABELS[status]}</span>
-                  <span className="rounded-full bg-[rgba(255,255,255,0.06)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--muted)]">
+              <header className="column-head">
+                <div className="flex min-w-0 items-center gap-2">
+                  <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: accent }} />
+                  <span className="truncate text-[12px] font-semibold">{STATUS_LABELS[status]}</span>
+                  <span className="rounded-full border border-[var(--line)] bg-[var(--surface-3)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--muted)]">
                     {items.length}
                   </span>
                 </div>
                 {status === 'new' && canCreate ? (
-                  <Link href="/tasks/new" className="text-[var(--muted-2)] transition hover:text-[var(--lime)]" title="Создать задачу">
-                    <Icon name="plus" size={15} />
+                  <Link
+                    href="/tasks/new"
+                    className="grid h-6 w-6 place-items-center rounded-md border border-[var(--line)] bg-[var(--surface-3)] text-[var(--muted-2)] transition hover:border-[var(--accent)] hover:text-[var(--accent-text)]"
+                    title="Создать задачу"
+                  >
+                    <Icon name="plus" size={14} />
                   </Link>
                 ) : null}
               </header>
-              <p className="-mt-1 px-1 text-[10px] text-[var(--muted-2)]">{STATUS_HINTS[status]}</p>
+              <p className="-mt-1 px-0.5 text-[10px] text-[var(--muted-2)]">{STATUS_HINTS[status]}</p>
 
-              <div className="flex flex-col gap-2">
+              <div className="column-cards">
                 {items.length === 0 ? (
-                  <div className="rounded-xl border border-dashed border-[var(--line)] px-3 py-6 text-center text-[11px] text-[var(--muted-2)]">
+                  <div className="rounded-lg border border-dashed border-[var(--line)] px-3 py-6 text-center text-[11px] text-[var(--muted-2)]">
                     Пусто
                   </div>
                 ) : (
                   items.map((task) => (
                     <Link key={task.id} href={`/tasks/${task.id}`} className="task-card" data-testid="task-card" data-code={task.code}>
                       <div className="flex items-center justify-between gap-2">
-                        <span className="chip chip-mono !border-transparent !bg-transparent !px-0">{task.code}</span>
+                        <span className="font-mono text-[10px] font-medium tracking-[0.02em] text-[var(--muted-2)]">{task.code}</span>
                         <PriorityChip priority={task.priority} />
                       </div>
-                      <p className="mt-2 line-clamp-2 text-[13px] font-medium leading-snug">{task.offer}</p>
-                      <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                        <span className="chip">{task.geo}</span>
+                      <p className="mt-2.5 line-clamp-2 text-[13px] font-medium leading-snug">{task.offer}</p>
+                      <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+                        <GeoChip geo={task.geo} />
                         <TypeChip type={task.creativeType} />
-                        <span className="chip">×{task.quantity}</span>
+                        <span className="pill pill-low">×{task.quantity}</span>
                       </div>
                       {task.assigneeName ? (
-                        <div className="mt-2.5 flex items-center gap-1.5">
-                          <Avatar name={task.assigneeName} color="#8b6cff" size={18} />
+                        <div className="mt-3 flex items-center gap-2 border-t border-[var(--line)] pt-2.5">
+                          <Avatar name={task.assigneeName} color="#a78bfa" size={18} />
                           <span className="truncate text-[11px] text-[var(--muted)]">{task.assigneeName}</span>
                         </div>
                       ) : (
-                        <div className="mt-2.5 flex items-center gap-1.5 text-[11px] text-[var(--muted-2)]">
+                        <div className="mt-3 flex items-center gap-2 border-t border-[var(--line)] pt-2.5 text-[11px] text-[var(--muted-2)]">
                           <span className="grid h-[18px] w-[18px] place-items-center rounded-full border border-dashed border-[var(--line-strong)]">
                             <Icon name="user" size={10} />
                           </span>
                           Свободна
                         </div>
                       )}
-                      <div className="mt-2.5 flex flex-wrap items-center gap-1.5 border-t border-[var(--line)] pt-2">
+                      <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
                         <DeadlineChip deadline={task.deadline} status={task.status} now={now} />
                         <CreditsChip value={task.creditsTotal} />
                         {task.revisionCount > 0 ? (
-                          <span className="chip" style={{ color: '#f2a65a', background: '#f2a65a14', borderColor: '#f2a65a33' }}>
-                            правки · {task.revisionCount}
-                          </span>
+                          <span className="pill pill-high">правки · {task.revisionCount}</span>
                         ) : null}
                       </div>
                     </Link>
@@ -217,7 +226,7 @@ export function KanbanBoard({
               </div>
 
               {status === 'done' ? (
-                <div className="px-1 pt-1 text-[10px] text-[var(--muted-2)]">
+                <div className="border-t border-[var(--line)] px-0.5 pt-2 text-[10px] text-[var(--muted-2)]">
                   {formatCredits(items.reduce((sum, task) => sum + task.creditsTotal, 0))} AI-кредитов
                 </div>
               ) : null}

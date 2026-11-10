@@ -256,7 +256,7 @@ export function NewTaskForm() {
           </div>
 
           {formError ? (
-            <p data-testid="form-error" className="rounded-lg border border-[#f26d6d40] bg-[#f26d6d14] px-3 py-2 text-[12px] text-[#f6a1a1]">
+            <p data-testid="form-error" className="rounded-lg border border-[rgba(248,113,113,.3)] bg-[rgba(248,113,113,.08)] px-3 py-2 text-[12px] text-[#fca5a5]">
               {formError}
             </p>
           ) : null}

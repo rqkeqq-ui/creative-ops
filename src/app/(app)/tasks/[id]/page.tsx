@@ -81,7 +81,7 @@ export default async function TaskPage({ params }: { params: Promise<{ id: strin
               </span>
               {task.revisionCount > 0 ? <span className="chip">раундов правок: {task.revisionCount}</span> : null}
               {isOverdue ? (
-                <span className="chip" style={{ color: '#f26d6d', background: '#f26d6d14', borderColor: '#f26d6d3d' }}>
+                <span className="pill pill-urgent">
                   <Icon name="alert" size={11} /> просрочено
                 </span>
               ) : null}
@@ -105,7 +105,7 @@ export default async function TaskPage({ params }: { params: Promise<{ id: strin
 
           <div className="w-full max-w-[260px] rounded-xl border border-[var(--line)] bg-[rgba(255,255,255,0.02)] p-3.5">
             <p className="text-[10px] font-semibold uppercase tracking-[0.09em] text-[var(--muted-2)]">Дедлайн</p>
-            <p className={`mt-1 text-[16px] font-semibold ${isOverdue ? 'text-[#f26d6d]' : ''}`}>{formatDeadline(task.deadline)}</p>
+            <p className={`mt-1 text-[16px] font-semibold ${isOverdue ? 'text-[var(--red)]' : ''}`}>{formatDeadline(task.deadline)}</p>
             <p className="mt-0.5 text-[11px] text-[var(--muted-2)]">{relativeDeadline(task.deadline, now)}</p>
             <div className="mt-3 flex items-center gap-2 border-t border-[var(--line)] pt-2.5">
               {task.assignee ? (
@@ -127,7 +127,7 @@ export default async function TaskPage({ params }: { params: Promise<{ id: strin
       {task.revisionNote ? (
         <div
           data-testid="revision-note"
-          className="mt-3 flex items-start gap-2.5 rounded-xl border border-[#f2a65a33] bg-[#f2a65a0d] px-4 py-3 text-[12px] text-[#f6c28b]"
+          className="mt-3 flex items-start gap-2.5 rounded-xl border border-[rgba(251,146,60,.28)] bg-[rgba(251,146,60,.07)] px-4 py-3 text-[12px] text-[#fdba74]"
         >
           <Icon name="refresh" size={15} />
           <span>
@@ -168,7 +168,7 @@ export default async function TaskPage({ params }: { params: Promise<{ id: strin
                 href={task.deliverableUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-lg border border-[#3ecf8e33] bg-[#3ecf8e0d] px-3 py-2 text-[12px] text-[#7ee2b8] hover:bg-[#3ecf8e18]"
+                className="inline-flex items-center gap-2 rounded-lg border border-[rgba(52,211,153,.28)] bg-[rgba(52,211,153,.07)] px-3 py-2 text-[12px] text-[#6ee7b7] transition hover:bg-[rgba(52,211,153,.12)]"
               >
                 <Icon name="link" size={14} />
                 {task.deliverableUrl}
@@ -183,7 +183,7 @@ export default async function TaskPage({ params }: { params: Promise<{ id: strin
             hint="Сервисы и кредиты, потраченные на задачу, включая правки"
             icon="coins"
             actions={
-              <span className="chip" style={{ color: '#c6f24e', background: '#c6f24e10', borderColor: '#c6f24e30' }}>
+              <span className="pill pill-ai">
                 <span data-testid="ai-total">{formatCredits(task.creditsTotal)}</span> кр.
               </span>
             }
@@ -200,7 +200,7 @@ export default async function TaskPage({ params }: { params: Promise<{ id: strin
                     data-testid="ai-usage-row"
                     className="flex items-center gap-3 rounded-lg border border-[var(--line)] bg-[rgba(255,255,255,0.02)] px-3 py-2"
                   >
-                    <span className="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-[#c6f24e12] text-[#c6f24e]">
+                    <span className="grid h-7 w-7 shrink-0 place-items-center rounded-md border border-[rgba(52,211,153,.22)] bg-[rgba(52,211,153,.08)] text-[#6ee7b7]">
                       <Icon name="spark" size={13} />
                     </span>
                     <div className="min-w-0 flex-1">
@@ -213,12 +213,7 @@ export default async function TaskPage({ params }: { params: Promise<{ id: strin
                       </p>
                     </div>
                     <span
-                      className="chip !text-[9.5px]"
-                      style={
-                        usage.phase === 'revision'
-                          ? { color: '#f2a65a', background: '#f2a65a12', borderColor: '#f2a65a33' }
-                          : undefined
-                      }
+                      className={usage.phase === 'revision' ? 'pill pill-high' : 'pill pill-low'}
                     >
                       {usage.phase === 'revision' ? 'правки' : 'основная'}
                     </span>
