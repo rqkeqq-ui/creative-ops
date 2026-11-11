@@ -13,3 +13,7 @@ test-results
 srv.log
 srv.err.log
 *.log
+
+# local demo launcher artifacts
+logs/
+tools/cloudflared.exe
